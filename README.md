@@ -12,3 +12,9 @@ Final degree project.
 - Screenshot de página de ejemplo de como se podria mostrar la página principal.
 
 ![Example1](/screenshots/example1.png)
+
+- Realización de práctica donde se simula una base de datos con facturas y usuarios
+- Se muestra en una página de administración el listado de facturas, su gestion para borrado o editar datos
+- Y la opción de añadir una factura a la base de datos
+
+![Example2](/screenshots/example2.png)
