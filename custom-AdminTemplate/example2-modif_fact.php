@@ -206,123 +206,110 @@
         <div class="container-fluid">
           <div class="row">
 
-          
-
             <!-- Card-group 0 -->
             <div class="col-lg-12">
-            <?php
-              $conn = new mysqli("localhost", "root", "", "db_muestra");
 
-              if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
-              }else{
-                if(isset($_POST["delete"])){
-                  $id_factura = $_POST['delete'];
-                  // sql to delete a record
-                  $sql = "UPDATE `factura` SET `fecha_modif`='27/02/2023',`estado`='d' WHERE `id` =".$id_factura;
+              <?php
+              if (isset($_POST["edited"])) {
+                $id_factura = $_POST['edited'];
+                $cabecera = $_POST['cabecera'];
+                $detalle = $_POST['detalle'];
 
-                  if (mysqli_query($conn, $sql)) {
-                    echo "<script>alert('Eliminado correctamente');</script>";
-                  } else {
-                    echo "<script>alert('".mysqli_error($connect)."'); </script>";
+                $conn = new mysqli("localhost", "root", "", "db_muestra");
+                $sql = "UPDATE factura SET cabecera='" . $cabecera . "', detalle= '" . $detalle . "' WHERE id=" . $id_factura . ";";
+
+                if ($conn->query($sql) === TRUE) {
+                  echo "<script>alert(Record updated successfully);</script>";
+                  echo "<a href='example2-listado_fact.php' class='btn btn-success'>Volver al listado</a></div>";
+                } else {
+                  echo "<script>alert(Error updating record: " . $conn->error . "</script>";
+                }
+                $conn->close();
+
+              }else
+
+              if (isset($_POST["to_edit"])) {
+                $id_factura = $_POST['to_edit'];
+
+                $conn = new mysqli("localhost", "root", "", "db_muestra");
+                $sql = "SELECT cabecera,detalle FROM factura WHERE `id` = " . $id_factura . ";";
+                $result = $conn->query($sql);
+
+                $cabecera = "";
+                $detalle = "";
+                if ($result->num_rows > 0) {
+                  while ($row = $result->fetch_assoc()) {
+                    ?>
+                      <form action="example2-modif_fact.php" method="post">
+                <div class="card card-secondary">
+                  <div class="card-header">
+                    <h3 class="card-title">Nueva factura</h3>
+                    <div class="card-tools">
+
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="inputName">Cabecera</label>
+                      <input type="text" id="cabecera" name="cabecera" class="form-control"
+                        value="<?php echo $row['cabecera']; ?>">
+                    </div>
+                    <div class="form-group">
+                      <label for="inputDescription">Detalles</label>
+                      <textarea id="detalle" name="detalle" class="form-control"
+                        rows="4"><?php echo $row['detalle']; ?></textarea>
+                    </div>
+                  </div></div>
+
+                </div>
+                <!-- /.Card-group 1 -->
+                <div class="col-12">
+                  <a href="#" class="btn btn-secondary">Cancel</a>
+                  <button type="submit" name="edited" value="<?php echo $id_factura; ?>"
+                    class="btn btn-success float-right">Editar </button>
+                </div>
+              </form>
+                    <?php
                   }
                 }
+              }
+              ?>
+              
 
-                $sql = "SELECT id,cabecera,detalle,fecha_creacion FROM factura WHERE `estado` = 'a';";
-                $result = $conn->query($sql);
-            ?>
-              <!-- Tabla facturas -->
-              <div class="card">
-                <div class="card-header border-transparent">
-                  <h3 class="card-title">Últimas facturas</h3>
-                  <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                      <i class="fas fa-minus"></i>
-                    </button>
-                  </div>
-                </div>
 
-                <div class="card-body p-0">
-                  <div class="table-responsive">
-                    <table class="table m-0">
-                      <thead>
-                        <tr>
-                          <th>Nº Factura</th>
-                          <th>Cabecera</th>
-                          <th>Detalles</th>
-                          <th>Fecha creación</th>
-                          <th>Opciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <!-- Element table -->
-                        <?php 
-                          if ($result->num_rows > 0) {
-                            while($row = $result->fetch_assoc()) {
-                              echo "<tr>";
-                              echo "<td>" . $row["id"]. "</td><td>" . $row["cabecera"]. "</td><td>" . $row["detalle"]. "</td>";
-                              echo "<td>" . $row["fecha_creacion"]. "</td>";
+            </div>
+            <!-- /.Card-group0 -->
+            <!-- /.row -->
 
-                              echo "<td>
-                                    <form action='example2-gestionar_fact.php' method='post' class='float-left'>
-                                    <button type='submit' name='delete' value='".$row["id"]."' class='badge badge-danger'>Borrar</button>
-                                    </form>";
-                              echo "<form action='example2-modif_fact.php' method='post' class='float-left'>
-                                    <button type='submit' name='to_edit' value='".$row["id"]."' class='badge badge-warning ml-1'>Editar</button>
-                                    </form></td>";
-                              echo "</tr>";
-                            }
-                          } 
-
-                          $conn->close();
-                        ?>
-                        <!-- /.Element table -->
-                      </tbody>
-                    </table>
-                  </div>
-
-                </div>
-
-                <div class="card-footer clearfix">
-                  <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Gestionar factura</a>
-                  <a href="example2-nueva_fact.php" class="btn btn-sm btn-success float-right">Nueva factura</a>
-                </div>
-
-                </div>
-              </div>
-              <!-- /.Tabla facturas -->
-
-            <?php }?>
-            <!-- /.Card-group 0 -->
-
-          </div>
-          <!-- /.row -->
-        </div><!-- /.container-fluid -->
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
       </div>
-      <!-- /.content -->
+      <!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer">
+        <!-- To the right -->
+        <div class="float-right d-none d-sm-inline">
+          Pie de página
+        </div>
+        <!-- Default to the left -->
+        <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+      </footer>
     </div>
-    <!-- /.content-wrapper -->
+    <!-- ./wrapper -->
 
-    <!-- Main Footer -->
-    <footer class="main-footer">
-      <!-- To the right -->
-      <div class="float-right d-none d-sm-inline">
-        Pie de página
-      </div>
-      <!-- Default to the left -->
-      <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-    </footer>
-  </div>
-  <!-- ./wrapper -->
+    <!-- REQUIRED SCRIPTS -->
 
-  <!-- REQUIRED SCRIPTS -->
-
-  <!-- jQuery -->
-  <script src="plugins/jquery/jquery.min.js"></script>
-  <!-- Bootstrap 4 -->
-  <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <!-- AdminLTE App -->
-  <script src="dist/js/adminlte.min.js"></script>
+    <!-- jQuery -->
+    <script src="plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="dist/js/adminlte.min.js"></script>
 </body>
 
 </html>
