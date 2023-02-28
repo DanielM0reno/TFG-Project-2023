@@ -14,6 +14,9 @@
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
+
+  <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -210,15 +213,6 @@
 
             <!-- Card-group 0 -->
             <div class="col-lg-12">
-            <?php
-              $conn = new mysqli("localhost", "root", "", "db_muestra");
-
-              if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
-              }else{
-                $sql = "SELECT id,cabecera,detalle,fecha_creacion FROM factura WHERE `estado` = 'a';";
-                $result = $conn->query($sql);
-            ?>
               <div class="card">
                 <div class="card-header border-transparent">
                   <h3 class="card-title">Últimas facturas</h3>
@@ -230,8 +224,8 @@
                 </div>
 
                 <div class="card-body p-0">
-                  <div class="table-responsive">
-                    <table class="table m-0">
+                  <div class="table-responsive p-2">
+                    <table id="listado_fact" class="table table-bordered table-striped dataTable dtr-inline p-2">
                       <thead>
                         <tr>
                           <th>Nº Factura</th>
@@ -240,20 +234,7 @@
                           <th>Fecha creación</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <!-- Element table -->
-                        <?php 
-                          if ($result->num_rows > 0) {
-                            while($row = $result->fetch_assoc()) {
-                              echo "<tr>";
-                              echo "<td>" . $row["id"]. "</td><td>" . $row["cabecera"]. "</td><td>" . $row["detalle"]. "</td>";
-                              echo "<td>" . $row["fecha_creacion"]. "</td>";
-                              echo "</tr>";
-                            }
-                          } 
-                          $conn->close();
-                        ?>
-                        <!-- /.Element table -->
+                      <tbody> 
                       </tbody>
                     </table>
                   </div>
@@ -267,8 +248,6 @@
 
                 </div>
               </div>
-
-            <?php }?>
             <!-- /.Card-group 0 -->
 
           </div>
@@ -299,6 +278,21 @@
   <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
+
+  <script src="plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
+  <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+  <script type="application/javascript">
+    $(document).ready( function () {
+        $('#listado_fact').DataTable({
+            ajax: 'backend/get_data.php',
+        });
+    } );
+  </script>
 </body>
 
 </html>

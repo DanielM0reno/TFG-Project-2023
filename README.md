@@ -23,4 +23,7 @@ Final degree project.
 - Realización de script para insertar masivamente datos en la tabla de facturas
     - Ver script 'script-insert_data.php' dentro del directorio scripts
 - Despues del insertado comprobamos la necesidad de paginación para optimizar el rendimiento de la página
-- Para ello empleo ajax para realizar la paginación.
+- Para ello empleo ajax y la libreria datatable para realizar la paginación.
+- Se puede observar la nueva tabla realiada con datatables.
+
+![Example2-Datatable](/screenshots/example2-datatables.png)
