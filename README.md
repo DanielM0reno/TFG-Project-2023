@@ -27,3 +27,31 @@ Final degree project.
 - Se puede observar la nueva tabla realiada con datatables.
 
 ![Example2-Datatable](/screenshots/example2-datatables.png)
+
+- Script para adaptar los botones de la tabla para editar y eliminar elementos.
+
+```
+<script type="application/javascript">
+    $(document).ready( function () {
+        var table = $('#listado_fact').DataTable({
+            ajax: 'backend/get_data edit.php',
+            columnDefs: [
+            {
+                targets: -1,
+                data: null,
+                defaultContent: '<form action="example2-gestionar_fact.php" method="post" class="float-left">'+
+                                  '<button type="submit" name="delete" class="badge badge-danger">Borrar</button>'+
+                                  '</form><form action="example2-modif_fact.php" method="post" class="float-left">'+
+                                    '<button type="submit" name="to_edit" class="badge badge-warning ml-1">Editar</button></form>',
+            },
+        ],
+        });
+
+        $('#listado_fact tbody').on('click', 'button', function () {
+          var data = table.row($(this).parents('tr')).data();
+          this.value = data[0];
+    });
+    } );
+  </script>
+```
+

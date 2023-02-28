@@ -227,9 +227,6 @@
                     echo "<script>alert('".mysqli_error($connect)."'); </script>";
                   }
                 }
-
-                $sql = "SELECT id,cabecera,detalle,fecha_creacion FROM factura WHERE `estado` = 'a';";
-                $result = $conn->query($sql);
             ?>
               <!-- Tabla facturas -->
               <div class="card">
@@ -244,7 +241,7 @@
 
                 <div class="card-body p-0">
                   <div class="table-responsive">
-                    <table class="table m-0">
+                    <table class="table table-bordered table-striped dataTable dtr-inline p-2" id="listado_fact">
                       <thead>
                         <tr>
                           <th>Nº Factura</th>
@@ -255,28 +252,6 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <!-- Element table -->
-                        <?php 
-                          if ($result->num_rows > 0) {
-                            while($row = $result->fetch_assoc()) {
-                              echo "<tr>";
-                              echo "<td>" . $row["id"]. "</td><td>" . $row["cabecera"]. "</td><td>" . $row["detalle"]. "</td>";
-                              echo "<td>" . $row["fecha_creacion"]. "</td>";
-
-                              echo "<td>
-                                    <form action='example2-gestionar_fact.php' method='post' class='float-left'>
-                                    <button type='submit' name='delete' value='".$row["id"]."' class='badge badge-danger'>Borrar</button>
-                                    </form>";
-                              echo "<form action='example2-modif_fact.php' method='post' class='float-left'>
-                                    <button type='submit' name='to_edit' value='".$row["id"]."' class='badge badge-warning ml-1'>Editar</button>
-                                    </form></td>";
-                              echo "</tr>";
-                            }
-                          } 
-
-                          $conn->close();
-                        ?>
-                        <!-- /.Element table -->
                       </tbody>
                     </table>
                   </div>
@@ -323,6 +298,37 @@
   <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
+
+  <script src="plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
+  <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+  <script type="application/javascript">
+    $(document).ready( function () {
+        var table = $('#listado_fact').DataTable({
+            ajax: 'backend/get_data edit.php',
+            columnDefs: [
+            {
+                targets: -1,
+                data: null,
+                defaultContent: '<form action="example2-gestionar_fact.php" method="post" class="float-left">'+
+                                  '<button type="submit" name="delete" class="badge badge-danger">Borrar</button>'+
+                                  '</form><form action="example2-modif_fact.php" method="post" class="float-left">'+
+                                    '<button type="submit" name="to_edit" class="badge badge-warning ml-1">Editar</button></form>',
+            },
+        ],
+        });
+
+        $('#listado_fact tbody').on('click', 'button', function () {
+          var data = table.row($(this).parents('tr')).data();
+          this.value = data[0];
+    });
+    } );
+  </script>
+  
 </body>
 
 </html>
