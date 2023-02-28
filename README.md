@@ -55,3 +55,4 @@ Final degree project.
   </script>
 ```
 
+![Example2-Datatable with options](/screenshots/example2-datatables_with_options.png)
