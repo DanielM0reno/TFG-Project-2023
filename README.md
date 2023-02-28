@@ -18,3 +18,9 @@ Final degree project.
 - Y la opción de añadir una factura a la base de datos
 
 ![Example2](/screenshots/example2.png)
+
+## 28/02/2023
+- Realización de script para insertar masivamente datos en la tabla de facturas
+    - Ver script 'script-insert_data.php' dentro del directorio scripts
+- Despues del insertado comprobamos la necesidad de paginación para optimizar el rendimiento de la página
+- Para ello empleo ajax para realizar la paginación.
