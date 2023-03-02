@@ -3,7 +3,7 @@
 $conn = new mysqli("localhost", "root", "", "db_muestra");
 
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    echo("Connection failed: " . $conn->connect_error);
 } else {
 
     $n_insert = 0;
