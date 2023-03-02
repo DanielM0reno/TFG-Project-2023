@@ -56,3 +56,7 @@ Final degree project.
 ```
 
 ![Example2-Datatable with options](/screenshots/example2-datatables_with_options.png)
+
+## 2/3/2023
+- Subida de proyecto al servidor de pruebas para comprobar el rendimiento
+- Creacion de variables de entorno para establecer la conexion con el servidor mysql mas seguro.
