@@ -218,7 +218,7 @@
                 $detalle = $_POST['detalle'];
 
                 $conn = new mysqli($host, $user, $password, $database);
-                $sql = "UPDATE factura SET cabecera='" . $cabecera . "', detalle= '" . $detalle . "' WHERE id=" . $id_factura . ";";
+                $sql = "UPDATE factura SET cabecera='" . $cabecera . "', detalle= '" . $detalle . "',fecha_modif='".date("d/m/Y")."' WHERE id=" . $id_factura . ";";
 
                 if ($conn->query($sql) === TRUE) {
                   echo "<script>alert(Record updated successfully);</script>";
