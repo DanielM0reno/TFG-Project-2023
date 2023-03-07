@@ -145,15 +145,9 @@
                 </p>
               </a>
               <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="index.php" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Listar facturas</p>
-                  </a>
-                </li>
 
                 <li class="nav-item">
-                  <a href="gestionar_fact.php" class="nav-link">
+                  <a href="index.php" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Gestionar facturas</p>
                   </a>
@@ -206,13 +200,9 @@
         <div class="container-fluid">
           <div class="row">
 
-
-
-            <!-- Card-group 0 -->
-            <div class="col-lg-12">
-              
-              <?php
+            <?php
               include 'backend/env.php';
+              $conn = new mysqli($host, $user, $password, $database);
 
               if(isset($_POST["submit"])){
                 $cabecera = $_POST['cabecera'];
@@ -226,41 +216,115 @@
                   echo "<script>alert('".mysqli_error($connect)."'); </script>";
                 }
               }
-                ?>
+            ?>
+
+            <!-- Card-group 0 -->
+            <div class="col-lg-6">
                 <form action="nueva_fact.php" method="post">
-                <div class="card card-secondary">
-                  <div class="card-header">
-                    <h3 class="card-title">Nueva factura</h3>
-                    <div class="card-tools">
-
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                        <i class="fas fa-minus"></i>
-                      </button>
+                  <div class="card card-secondary">
+                    <div class="card-header">
+                      <h3 class="card-title">Nueva factura</h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </div>
                     </div>
+                    <div class="card-body">
+                      <div class="form-group">
+                        <label for="inputName">Cabecera</label>
+                        <input type="text" id="cabecera" name="cabecera" class="form-control">
+                      </div>
+                      <div class="form-group">
+                        <label for="inputDescription">Clientes</label>
+                        <select id="cliente" name="cliente" class="form-control">
+                          <?php
+                            $sql = "SELECT DISTINCT id, name FROM `client`;";
+                            $result = $conn->query($sql);
+                                if ($result->num_rows > 0) {                
+                                  // output data of each row
+                                  while($row = $result->fetch_assoc()) {
+                                    echo "<option value='".$row['id']."'>" . $row["name"]. "</option>";
+                                  }
+                                } 
+                              
+                              $conn->close();  
+                          ?>
+                        </select>
+                      </div>
+                    </div>
+                
                   </div>
-                  <div class="card-body">
-                    <div class="form-group">
-                      <label for="inputName">Cabecera</label>
-                      <input type="text" id="cabecera" name="cabecera" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label for="inputDescription">Detalles</label>
-                      <textarea id="detalle" name="detalle" class="form-control" rows="4"></textarea>
-                    </div>
-                  </div>
-              
-                </div>
-
-              <!-- /.Card-group 0 -->
-                <div class="col-12">
-                  <a href="#" class="btn btn-secondary">Cancel</a>
-                  <input type="submit" name="submit" value="Nueva factura" class="btn btn-success float-right">
-                </div>
-              </div>
-              </form>
+                </form>
             </div>
             <!-- /.Card-group0 -->
-            <!-- /.row -->
+
+            <!-- Card-group 1 -->
+            <div class="col-lg-6">
+                  <div class="card card-secondary">
+                    <div class="card-header">
+                      <h3 class="card-title">Nueva linea facturación</h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="form-group">
+                        <label for="inputName">Producto</label>
+                        <input type="text" id="input_producto" name="producto" class="form-control">
+                      </div>
+                      <div class="form-group">
+                        <label for="inputName">Cantidad</label>
+                        <input type="text" id="input_cantidad" name="cantidad" class="form-control">
+                      </div>
+                      <div class="form-group">
+                        <label for="inputName">Detalle</label>
+                        <input type="text" id="input_detalle" name="detalle" class="form-control">
+                      </div>
+                      <div class="form-group">
+                        <button type="button" class="btn btn-success float-right" id="button_add_linea">Añadir linea</button>
+                      </div>
+                    </div>
+                  </div>
+
+            </div>
+            <!-- /.Card-group 1 -->
+            
+            <!-- Card-group 2 -->
+            <div class="col-lg-12">
+               
+                  <div class="card card-secondary">
+                    <div class="card-header">
+                      <h3 class="card-title">Lineas de factura</h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                    <table  class="table table-bordered table-striped dataTable dtr-inline p-2" id="listado_lineas">
+                      <thead>
+                        <tr>
+                          <th>Detalle</th>
+                          <th>Producto</th>
+                          <th>Cantidad</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                    </div>
+                
+                  </div>
+
+            </div>
+            <!-- /.Card-group 2 -->
+
+
+          </div><!-- /.row -->
           </div><!-- /.container-fluid -->
         </div>
         <!-- /.content -->
@@ -287,6 +351,21 @@
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/adminlte.min.js"></script>
+
+    <script>
+      var data = [];
+
+      $("#button_add_linea").click(function(){
+        if ($("#input_producto, #input_detalle, #input_cantidad").val() != ""){
+          data.push({detalle: $( "input#input_detalle" ).val(), producto: $( "input#input_producto" ).val(), cantidad:$( "input#input_cantidad" ).val()});
+          
+          $('#listado_lineas > tbody:last-child').append('<tr><td>'+$( "input#input_detalle" ).val()+'</td>'+
+          '<td>'+$( "input#input_cantidad" ).val()+'</td>'+'<td>'+$( "input#input_producto" ).val()+'</td></tr>');
+          $("#input_producto, #input_detalle, #input_cantidad").val('');
+        }
+        console.log(data);
+      });
+    </script>
 </body>
 
 </html>

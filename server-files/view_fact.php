@@ -145,15 +145,9 @@
                 </p>
               </a>
               <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="index.php" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Listar facturas</p>
-                  </a>
-                </li>
 
                 <li class="nav-item">
-                  <a href="gestionar_fact.php" class="nav-link">
+                  <a href="index.php" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Gestionar facturas</p>
                   </a>
@@ -218,22 +212,18 @@
               if ($conn->connect_error) {
                 die("Connection failed: " . $conn->connect_error);
               }else{
-                if(isset($_POST["delete"])){
-                  $id_factura = $_POST['delete'];
-                  // sql to delete a record
-                  $sql = "UPDATE `factura` SET `fecha_modif`='27/02/2023',`estado`='d' WHERE `id` =".$id_factura;
+                if(isset($_POST["view"])){
+                  $id_fact = $_POST['view'];
 
-                  if (mysqli_query($conn, $sql)) {
-                    echo "<script>alert('Eliminado correctamente');</script>";
-                  } else {
-                    echo "<script>alert('".mysqli_error($connect)."'); </script>";
-                  }
-                }
-            ?>
+                  $sql = "SELECT `detalle`,`product`.`name` AS `producto`,`cantidad`,`product`.`precio` 
+                  FROM `linea`,`product` WHERE `id_product` = `product`.`id` AND `id_factura` = ".$id_fact;
+
+                  $result = $conn->query($sql);
+                  ?>
               <!-- Tabla facturas -->
               <div class="card">
                 <div class="card-header border-transparent">
-                  <h3 class="card-title">Últimas facturas</h3>
+                  <h3 class="card-title">Detalle de la factura</h3>
                   <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                       <i class="fas fa-minus"></i>
@@ -242,34 +232,40 @@
                 </div>
 
                 <div class="card-body p-0">
-                  <div class="table-responsive">
-                    <table class="table table-bordered table-striped dataTable dtr-inline p-2" id="listado_fact">
+                  <div class="table-responsive p-2">
+                    <table  class="table table-bordered table-striped dataTable dtr-inline p-2" id="listado_fact">
                       <thead>
                         <tr>
-                          <th>Nº Factura</th>
-                          <th>Cabecera</th>
-                          <th>Detalles</th>
-                          <th>Fecha creación</th>
-                          <th>Opciones</th>
+                          <th>Detalle</th>
+                          <th>Producto</th>
+                          <th>Cantidad</th>
+                          <th>Precio</th>
                         </tr>
                       </thead>
                       <tbody>
+                        <?php     
+                         if ($result->num_rows > 0) {                
+                                // output data of each row
+                                while($row = $result->fetch_assoc()) {
+                                  echo "<tr><td>" . $row["detalle"]. "</td>
+                                        <td>" . $row["producto"]. "</td>
+                                        <td>".  $row["cantidad"]."</td>
+                                        <td>".  $row["precio"]. "€</td></tr>";
+                                }
+                              } 
+                            }
+                            $conn->close();
+                          }   
+                        ?>
                       </tbody>
                     </table>
                   </div>
 
                 </div>
 
-                <div class="card-footer clearfix">
-                  <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Gestionar factura</a>
-                  <a href="nueva_fact.php" class="btn btn-sm btn-success float-right">Nueva factura</a>
-                </div>
-
                 </div>
               </div>
               <!-- /.Tabla facturas -->
-
-            <?php }?>
             <!-- /.Card-group 0 -->
 
           </div>
@@ -307,29 +303,6 @@
   <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
   <script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
   <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-
-  <script type="application/javascript">
-    $(document).ready( function () {
-        var table = $('#listado_fact').DataTable({
-            ajax: 'backend/get_data.php',
-            columnDefs: [
-            {
-                targets: -1,
-                data: null,
-                defaultContent: '<form action="gestionar_fact.php" method="post" class="float-left">'+
-                                  '<button type="submit" name="delete" class="badge badge-danger">Borrar</button>'+
-                                  '</form><form action="modif_fact.php" method="post" class="float-left">'+
-                                    '<button type="submit" name="to_edit" class="badge badge-warning ml-1">Editar</button></form>',
-            },
-        ],
-        });
-
-        $('#listado_fact tbody').on('click', 'button', function () {
-          var data = table.row($(this).parents('tr')).data();
-          this.value = data[0];
-    });
-    } );
-  </script>
   
 </body>
 

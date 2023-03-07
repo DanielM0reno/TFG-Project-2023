@@ -145,15 +145,9 @@
                 </p>
               </a>
               <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="index.php" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Listar facturas</p>
-                  </a>
-                </li>
 
                 <li class="nav-item">
-                  <a href="gestionar_fact.php" class="nav-link">
+                  <a href="index.php" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Gestionar facturas</p>
                   </a>

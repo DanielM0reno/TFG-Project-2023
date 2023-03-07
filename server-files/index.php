@@ -14,9 +14,6 @@
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
-
-  <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -31,7 +28,7 @@
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="index.php" class="nav-link">Inicio</a>
+          <a href="index3.html" class="nav-link">Inicio</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
           <a href="#" class="nav-link">Otra categoria</a>
@@ -106,7 +103,7 @@
     <!-- Left Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
-      <a href="index.php" class="brand-link">
+      <a href="index3.html" class="brand-link">
         <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
           style="opacity: .8">
         <span class="brand-text font-weight-light">Título empresa</span>
@@ -148,15 +145,9 @@
                 </p>
               </a>
               <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="index.php" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Listar facturas</p>
-                  </a>
-                </li>
 
                 <li class="nav-item">
-                  <a href="gestionar_fact.php" class="nav-link">
+                  <a href="index.php" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Gestionar facturas</p>
                   </a>
@@ -213,6 +204,27 @@
 
             <!-- Card-group 0 -->
             <div class="col-lg-12">
+            <?php
+              include 'backend/env.php';
+
+              $conn = new mysqli($host, $user, $password, $database);
+
+              if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+              }else{
+                if(isset($_POST["delete"])){
+                  $id_factura = $_POST['delete'];
+                  // sql to delete a record
+                  $sql = "UPDATE `factura` SET `fecha_modif`='27/02/2023',`estado`='d' WHERE `id` =".$id_factura;
+
+                  if (mysqli_query($conn, $sql)) {
+                    echo "<script>alert('Eliminado correctamente');</script>";
+                  } else {
+                    echo "<script>alert('".mysqli_error($connect)."'); </script>";
+                  }
+                }
+            ?>
+              <!-- Tabla facturas -->
               <div class="card">
                 <div class="card-header border-transparent">
                   <h3 class="card-title">Últimas facturas</h3>
@@ -225,16 +237,17 @@
 
                 <div class="card-body p-0">
                   <div class="table-responsive p-2">
-                    <table id="listado_fact" class="table table-bordered table-striped dataTable dtr-inline p-2">
+                    <table  class="table table-bordered table-striped dataTable dtr-inline p-2" id="listado_fact">
                       <thead>
                         <tr>
                           <th>Nº Factura</th>
                           <th>Cabecera</th>
-                          <th>Detalles</th>
                           <th>Fecha creación</th>
+                          <th>Cliente</th>
+                          <th>Opciones</th>
                         </tr>
                       </thead>
-                      <tbody> 
+                      <tbody>
                       </tbody>
                     </table>
                   </div>
@@ -242,12 +255,15 @@
                 </div>
 
                 <div class="card-footer clearfix">
-                  <a href="gestionar_fact.php" class="btn btn-sm btn-info float-left">Gestionar factura</a>
+                  <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Gestionar factura</a>
                   <a href="nueva_fact.php" class="btn btn-sm btn-success float-right">Nueva factura</a>
                 </div>
 
                 </div>
               </div>
+              <!-- /.Tabla facturas -->
+
+            <?php }?>
             <!-- /.Card-group 0 -->
 
           </div>
@@ -288,11 +304,30 @@
 
   <script type="application/javascript">
     $(document).ready( function () {
-        $('#listado_fact').DataTable({
+        var table = $('#listado_fact').DataTable({
             ajax: 'backend/get_data.php',
+            columnDefs: [
+            {
+                targets: -1,
+                data: null,
+                defaultContent: '</form><form action="view_fact.php" method="post" class="float-left">'+
+                                    '<button type="submit" name="view" class="badge badge-success mr-1">Ver</button></form>'+
+                                    '</form><form action="modif_fact.php" method="post" class="float-left">'+
+                                    '<button type="submit" name="to_edit" class="badge badge-warning mr-1">Editar</button></form>'+
+                                  '<form action="index.php" method="post" class="float-left mr-1">'+
+                                  '<button type="submit" name="delete" class="badge badge-danger">Borrar</button>',
+                                 
+            },
+        ],
         });
+
+        $('#listado_fact tbody').on('click', 'button', function () {
+          var data = table.row($(this).parents('tr')).data();
+          this.value = data[0];
+    });
     } );
   </script>
+  
 </body>
 
 </html>

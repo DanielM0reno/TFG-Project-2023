@@ -9,7 +9,7 @@ try {
     die($exception->getMessage());
 }
 
-$sql = "SELECT `factura`.`id`, cabecera, fecha_creacion, `client`.`name` AS client FROM factura, client WHERE `estado` = 'a' AND `factura`.`id_client` = `client`.`id`;";
+$sql = "SELECT `detalle`,`product`.`name` AS `Producto`,`cantidad`,`product`.`precio` FROM `linea`,`product` WHERE `id_product` = `product`.`id` AND `id_factura` = 2";
 $st = $conn->query($sql);
 
 if ($st) {

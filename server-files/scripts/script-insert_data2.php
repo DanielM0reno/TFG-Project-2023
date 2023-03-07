@@ -1,6 +1,7 @@
 <?php
+include '../backend/env.php';
 
-$conn = new mysqli("localhost", "root", "", "proyecto-tfg");
+$conn = new mysqli($host, $user, $password, $database);
 
 if ($conn->connect_error) {
     echo("Connection failed: " . $conn->connect_error);
