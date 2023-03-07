@@ -1,6 +1,7 @@
 <?php
+include '../backend/env.php';
 
-$conn = new mysqli("localhost", "root", "", "db_muestra");
+$conn = new mysqli($host, $user, $password, $database);
 
 if ($conn->connect_error) {
     echo("Connection failed: " . $conn->connect_error);
@@ -12,7 +13,7 @@ if ($conn->connect_error) {
         // Valores aleatorios
         $rand_day = rand(1,31);
         $rand_moth = rand(1,12);
-        $rand_user = rand(1,15);
+        $rand_user = rand(1,5);
 
         if($query = mysqli_query($conn, "INSERT INTO `factura` (`cabecera`, `detalle`, `fecha_creacion`, `estado`, `id_user`)" .
         "VALUES ('Factura nº" . $i . "', 'Descripcion de la factura nº" . $i . "', '".$rand_day."/".$rand_moth."/2022', 'a', '".$rand_user."');")){
@@ -20,4 +21,4 @@ if ($conn->connect_error) {
         };
     }
     echo "<h1>Se ha insertado correctamente ".($n_insert)." registros</h1>";
-}
+}?>
