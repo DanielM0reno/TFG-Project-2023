@@ -60,3 +60,8 @@ Final degree project.
 ## 2/3/2023
 - Subida de proyecto al servidor de pruebas para comprobar el rendimiento
 - Creacion de variables de entorno para establecer la conexion con el servidor mysql mas seguro.
+
+## 7/3/2023
+
+- Nuevo diseño de la base de datos. Se muestra la estructura a continuación.
+![Estructura-bbdd](/screenshots/estructura-ddbb.png)
