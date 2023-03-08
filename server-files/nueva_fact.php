@@ -247,8 +247,6 @@
                                     echo "<option value='".$row['id']."'>" . $row["name"]. "</option>";
                                   }
                                 } 
-                              
-                              $conn->close();  
                           ?>
                         </select>
                       </div>
@@ -273,7 +271,18 @@
                     <div class="card-body">
                       <div class="form-group">
                         <label for="inputName">Producto</label>
-                        <input type="text" id="input_producto" name="producto" class="form-control">
+                        <select id="input_producto" name="producto" class="form-control">
+                          <?php
+                            $sql = "SELECT id,name FROM `product` LIMIT 20;";
+                            $result = $conn->query($sql);
+                                if ($result->num_rows > 0) {                
+                                  // output data of each row
+                                  while($row = $result->fetch_assoc()) {
+                                    echo "<option value='".$row['id']."'>" . $row["name"]. "</option>";
+                                  }
+                                } 
+                          ?>
+                        </select>
                       </div>
                       <div class="form-group">
                         <label for="inputName">Cantidad</label>
@@ -323,6 +332,17 @@
             </div>
             <!-- /.Card-group 2 -->
 
+            <!-- Card-group 3 -->
+            <div class="col-lg-12">
+              <div class="card card-secondary">
+                <div class="card-body">
+                  <button class="btn btn-warning float-left">Clear</button>
+                    <button class="btn btn-success float-right">Crear factura</button>
+                </div>
+              </div>
+            </div>
+            <!-- /.Card-group 3 -->
+
 
           </div><!-- /.row -->
           </div><!-- /.container-fluid -->
@@ -357,10 +377,10 @@
 
       $("#button_add_linea").click(function(){
         if ($("#input_producto, #input_detalle, #input_cantidad").val() != ""){
-          data.push({detalle: $( "input#input_detalle" ).val(), producto: $( "input#input_producto" ).val(), cantidad:$( "input#input_cantidad" ).val()});
+          data.push({detalle: $( "input#input_detalle" ).val(), producto: $( "#input_producto" ).val(), cantidad:$( "input#input_cantidad" ).val()});
           
           $('#listado_lineas > tbody:last-child').append('<tr><td>'+$( "input#input_detalle" ).val()+'</td>'+
-          '<td>'+$( "input#input_cantidad" ).val()+'</td>'+'<td>'+$( "input#input_producto" ).val()+'</td></tr>');
+          '<td>'+$( "#input_producto option:selected" ).text()+'</td>'+'<td>'+$( "#input_cantidad" ).val()+'</td></tr>');
           $("#input_producto, #input_detalle, #input_cantidad").val('');
         }
         console.log(data);
