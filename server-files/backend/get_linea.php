@@ -9,11 +9,11 @@ try {
     die($exception->getMessage());
 }
 
-$sql = "SELECT `detalle`,`product`.`name` AS `Producto`,`cantidad`,`product`.`precio` FROM `linea`,`product` WHERE `id_product` = `product`.`id` AND `id_factura` = 2";
+$sql = "SELECT `detalle`,`product`.`name` AS `producto`,`cantidad`,`product`.`precio` FROM `linea`,`product` WHERE `id_product` = `product`.`id` AND `id_factura` = 2";
 $st = $conn->query($sql);
 
 if ($st) {
-    $rs = $st->fetchAll(PDO::FETCH_FUNC, fn($id, $cabecera, $fecha_creacion, $client) => [$id, $cabecera, $fecha_creacion, $client] );
+    $rs = $st->fetchAll(PDO::FETCH_FUNC, fn($detalle, $producto, $cantidad, $precio) => [$detalle, $producto, $cantidad, $precio] );
     echo json_encode([
         'data' => $rs,
     ]);

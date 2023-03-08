@@ -233,11 +233,11 @@
                     <div class="card-body">
                       <div class="form-group">
                         <label for="inputName">Cabecera</label>
-                        <input type="text" id="cabecera" name="cabecera" class="form-control">
+                        <input type="text" id="input_cabecera" name="cabecera" class="form-control">
                       </div>
                       <div class="form-group">
                         <label for="inputDescription">Clientes</label>
-                        <select id="cliente" name="cliente" class="form-control">
+                        <select id="input_cliente" name="cliente" class="form-control">
                           <?php
                             $sql = "SELECT DISTINCT id, name FROM `client`;";
                             $result = $conn->query($sql);
@@ -273,12 +273,12 @@
                         <label for="inputName">Producto</label>
                         <select id="input_producto" name="producto" class="form-control">
                           <?php
-                            $sql = "SELECT id,name FROM `product` LIMIT 20;";
+                            $sql = "SELECT id,name,precio FROM `product` LIMIT 20;";
                             $result = $conn->query($sql);
                                 if ($result->num_rows > 0) {                
                                   // output data of each row
                                   while($row = $result->fetch_assoc()) {
-                                    echo "<option value='".$row['id']."'>" . $row["name"]. "</option>";
+                                    echo "<option value='".$row['id']."-".$row['precio']."'>" . $row["name"]. "</option>";
                                   }
                                 } 
                           ?>
@@ -286,7 +286,7 @@
                       </div>
                       <div class="form-group">
                         <label for="inputName">Cantidad</label>
-                        <input type="text" id="input_cantidad" name="cantidad" class="form-control">
+                        <input type="text" id="input_cantidad" name="cantidad" class="form-control" required> 
                       </div>
                       <div class="form-group">
                         <label for="inputName">Detalle</label>
@@ -320,6 +320,8 @@
                           <th>Detalle</th>
                           <th>Producto</th>
                           <th>Cantidad</th>
+                          <th>Precio/U</th>
+                          <th></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -337,7 +339,7 @@
               <div class="card card-secondary">
                 <div class="card-body">
                   <button class="btn btn-warning float-left">Clear</button>
-                    <button class="btn btn-success float-right">Crear factura</button>
+                    <button class="btn btn-success float-right" id="crear_factura">Crear factura</button>
                 </div>
               </div>
             </div>
@@ -373,18 +375,49 @@
     <script src="dist/js/adminlte.min.js"></script>
 
     <script>
-      var data = [];
+      var data ={factura:[],lineas:[]};
 
       $("#button_add_linea").click(function(){
         if ($("#input_producto, #input_detalle, #input_cantidad").val() != ""){
-          data.push({detalle: $( "input#input_detalle" ).val(), producto: $( "#input_producto" ).val(), cantidad:$( "input#input_cantidad" ).val()});
+          var selector = $( "#input_producto option:selected" ).val().split("-");
+          data.lineas.push({detalle: $( "input#input_detalle" ).val(), producto: selector[0], cantidad:$( "input#input_cantidad" ).val()});
           
+          // Boton para eliminar lineas
+          btn_delete = "<td><button name='delete' class='badge badge-danger btnDelete'>Borrar</button></td>";
+
           $('#listado_lineas > tbody:last-child').append('<tr><td>'+$( "input#input_detalle" ).val()+'</td>'+
-          '<td>'+$( "#input_producto option:selected" ).text()+'</td>'+'<td>'+$( "#input_cantidad" ).val()+'</td></tr>');
+          '<td>'+$( "#input_producto option:selected" ).text()+'</td>'+'<td>'+$( "#input_cantidad" ).val()+'</td><td>'+selector[1]+'€</td>'+btn_delete+'</tr>');
+          
           $("#input_producto, #input_detalle, #input_cantidad").val('');
         }
         console.log(data);
       });
+
+      $("#listado_lineas").on('click', '.btnDelete', function () {
+          //Recojo el indice de la tabla para borrarlo en el array 
+          const index = $(this).closest('tr')[0].rowIndex;
+          console.log(index);
+          delete data.lineas[index-1];
+          $(this).closest('tr').remove();
+          console.log(data);
+      });
+
+      $("#crear_factura").click(function(){
+        data.factura.push({cabecera: $( "input#input_cabecera" ).val(), cliente: $( "#input_cliente option:selected" ).val()});
+        const send_data = JSON.stringify(data)
+        console.log(data);
+
+        $.ajax({
+        type: "POST",
+        url: "backend/get_data.php",
+        data: {data : send_data}, 
+        cache: false,
+
+        success: function(){
+            alert("OK");
+        }
+    });
+      }); 
     </script>
 </body>
 
