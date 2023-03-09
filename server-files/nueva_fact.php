@@ -375,12 +375,12 @@
     <script src="dist/js/adminlte.min.js"></script>
 
     <script>
-      var data ={factura:[],lineas:[]};
+      var data ={factura:{cabecera:'',client:''},lineas:[]};
 
       $("#button_add_linea").click(function(){
         if ($("#input_producto, #input_detalle, #input_cantidad").val() != ""){
           var selector = $( "#input_producto option:selected" ).val().split("-");
-          data.lineas.push({detalle: $( "input#input_detalle" ).val(), producto: selector[0], cantidad:$( "input#input_cantidad" ).val()});
+          data.lineas.push({"detalle": $( "input#input_detalle" ).val(), "producto": selector[0], "cantidad":$( "input#input_cantidad" ).val()});
           
           // Boton para eliminar lineas
           btn_delete = "<td><button name='delete' class='badge badge-danger btnDelete'>Borrar</button></td>";
@@ -403,14 +403,17 @@
       });
 
       $("#crear_factura").click(function(){
-        data.factura.push({cabecera: $( "input#input_cabecera" ).val(), cliente: $( "#input_cliente option:selected" ).val()});
-        const send_data = JSON.stringify(data)
-        console.log(data);
+        data.factura.cabecera = $( "input#input_cabecera" ).val();
+        data.factura.client = $( "#input_cliente option:selected" ).val();
+        const send_data = JSON.stringify(data.lineas)
+        console.log(send_data);
 
         $.ajax({
         type: "POST",
-        url: "backend/get_data.php",
-        data: {data : send_data}, 
+        url: "backend/new_data.php",
+        data: { cabecera : data.factura.cabecera,
+                client: data.factura.client,
+                data: send_data}, 
         cache: false,
 
         success: function(){
