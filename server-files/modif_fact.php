@@ -200,86 +200,164 @@
         <div class="container-fluid">
           <div class="row">
 
-            <!-- Card-group 0 -->
-            <div class="col-lg-12">
-
-              <?php
+            <?php
               include 'backend/env.php';
+              $conn = new mysqli($host, $user, $password, $database);
 
-              if (isset($_POST["edited"])) {
-                $id_factura = $_POST['edited'];
-                $cabecera = $_POST['cabecera'];
-                $detalle = $_POST['detalle'];
-
-                $conn = new mysqli($host, $user, $password, $database);
-                $sql = "UPDATE factura SET cabecera='" . $cabecera . "', detalle= '" . $detalle . "',fecha_modif='".date("d/m/Y")."' WHERE id=" . $id_factura . ";";
-
-                if ($conn->query($sql) === TRUE) {
-                  echo "<script>alert(Record updated successfully);</script>";
-                  echo "<a href='index.php' class='btn btn-success'>Volver al listado</a></div>";
-                } else {
-                  echo "<script>alert(Error updating record: " . $conn->error . "</script>";
+              $sql = "SELECT cabecera, id_client FROM factura WHERE `estado` = 'a' AND `factura`.`id` = '".$_POST['to_edit']."';";
+              $result = $conn->query($sql);
+              if ($result->num_rows > 0) {                
+                while($row = $result->fetch_assoc()) {
+                  echo "<input type='hidden' value='".$row['cabecera']."' id='h_cabecera'/>";
+                  echo "<input type='hidden' value='".$row['id_client']."' id='h_client'/>";
                 }
-                $conn->close();
+              }         
+            ?>
 
-              }else
-
-              if (isset($_POST["to_edit"])) {
-                $id_factura = $_POST['to_edit'];
-
-                $conn = new mysqli($host, $user, $password, $database);
-                $sql = "SELECT cabecera,detalle FROM factura WHERE `id` = " . $id_factura . ";";
-                $result = $conn->query($sql);
-
-                $cabecera = "";
-                $detalle = "";
-                if ($result->num_rows > 0) {
-                  while ($row = $result->fetch_assoc()) {
-                    ?>
-                      <form action="modif_fact.php" method="post">
-                <div class="card card-secondary">
-                  <div class="card-header">
-                    <h3 class="card-title">Nueva factura</h3>
-                    <div class="card-tools">
-
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                        <i class="fas fa-minus"></i>
-                      </button>
+            <!-- Card-group 0 -->
+            <div class="col-lg-6">
+                <form action="nueva_fact.php" method="post">
+                  <div class="card card-secondary">
+                    <div class="card-header">
+                      <h3 class="card-title">Nueva factura</h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </div>
                     </div>
+                    <div class="card-body">
+                      <div class="form-group">
+                        <label for="inputName">Cabecera</label>
+                        <input type="text" id="input_cabecera" name="cabecera" class="form-control">
+                      </div>
+                      <div class="form-group">
+                        <label for="inputDescription">Clientes</label>
+                        <select id="input_cliente" name="cliente" class="form-control">
+                          <?php
+                            $sql = "SELECT DISTINCT id, name FROM `client`;";
+                            $result = $conn->query($sql);
+                                if ($result->num_rows > 0) {                
+                                  // output data of each row
+                                  while($row = $result->fetch_assoc()) {
+                                    echo "<option value='".$row['id']."'>" . $row["name"]. "</option>";
+                                  }
+                                } 
+                          ?>
+                        </select>
+                      </div>
+                    </div>
+                
                   </div>
-                  <div class="card-body">
-                    <div class="form-group">
-                      <label for="inputName">Cabecera</label>
-                      <input type="text" id="cabecera" name="cabecera" class="form-control"
-                        value="<?php echo $row['cabecera']; ?>">
-                    </div>
-                    <div class="form-group">
-                      <label for="inputDescription">Detalles</label>
-                      <textarea id="detalle" name="detalle" class="form-control"
-                        rows="4"><?php echo $row['detalle']; ?></textarea>
-                    </div>
-                  </div></div>
-
-                </div>
-                <!-- /.Card-group 1 -->
-                <div class="col-12">
-                  <a href="#" class="btn btn-secondary">Cancel</a>
-                  <button type="submit" name="edited" value="<?php echo $id_factura; ?>"
-                    class="btn btn-success float-right">Editar </button>
-                </div>
-              </form>
-                    <?php
-                  }
-                }
-              }
-              ?>
-              
-
-
+                </form>
             </div>
             <!-- /.Card-group0 -->
-            <!-- /.row -->
 
+            <!-- Card-group 1 -->
+            <div class="col-lg-6">
+                  <div class="card card-secondary">
+                    <div class="card-header">
+                      <h3 class="card-title">Nueva linea facturación</h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="form-group">
+                        <label for="inputName">Producto</label>
+                        <select id="input_producto" name="producto" class="form-control">
+                          <?php
+                            $sql = "SELECT id,name,precio FROM `product` LIMIT 20;";
+                            $result = $conn->query($sql);
+                                if ($result->num_rows > 0) {                
+                                  // output data of each row
+                                  while($row = $result->fetch_assoc()) {
+                                    echo "<option value='".$row['id']."-".$row['precio']."'>" . $row["name"]. "</option>";
+                                  }
+                                } 
+                          ?>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputName">Cantidad</label>
+                        <input type="text" id="input_cantidad" name="cantidad" class="form-control" required> 
+                      </div>
+                      <div class="form-group">
+                        <label for="inputName">Detalle</label>
+                        <input type="text" id="input_detalle" name="detalle" class="form-control">
+                      </div>
+                      <div class="form-group">
+                        <button type="button" class="btn btn-success float-right" id="button_add_linea">Añadir linea</button>
+                      </div>
+                    </div>
+                  </div>
+
+            </div>
+            <!-- /.Card-group 1 -->
+            
+            <!-- Card-group 2 -->
+            <div class="col-lg-12">
+               
+                  <div class="card card-secondary">
+                    <div class="card-header">
+                      <h3 class="card-title">Lineas de factura</h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                    <table  class="table table-bordered table-striped dataTable dtr-inline p-2" id="listado_lineas">
+                      <thead>
+                        <tr>
+                          <th>Detalle</th>
+                          <th>Producto</th>
+                          <th>Cantidad</th>
+                          <th>Precio/U</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        $sql = "SELECT `linea`.`id`,`detalle`,`product`.`name` AS `producto`,`cantidad`,`product`.`precio` 
+                        FROM `linea`,`product` WHERE `id_product` = `product`.`id` AND `id_factura` = ".$_POST['to_edit'];
+      
+                        $result = $conn->query($sql);
+                        if ($result->num_rows > 0) {                
+                          // output data of each row
+                          while($row = $result->fetch_assoc()) {
+                            echo "<tr><td>" . $row["detalle"]. "</td>
+                                  <td>" . $row["producto"]. "</td>
+                                  <td>".  $row["cantidad"]."</td>
+                                  <td>".  $row["precio"]. "€</td>
+                                  <td><button name='delete' class='badge badge-danger btnDelete'>Borrar</button></td></tr>";
+                          }
+                        }  ?>
+                      </tbody>
+                    </table>
+                    </div>
+                
+                  </div>
+
+            </div>
+            <!-- /.Card-group 2 -->
+
+            <!-- Card-group 3 -->
+            <div class="col-lg-12">
+              <div class="card card-secondary">
+                <div class="card-body">
+                  <button class="btn btn-warning float-left">Clear</button>
+                    <button class="btn btn-success float-right" id="mod_factura">Modificar factura</button>
+                </div>
+              </div>
+            </div>
+            <!-- /.Card-group 3 -->
+
+
+          </div><!-- /.row -->
           </div><!-- /.container-fluid -->
         </div>
         <!-- /.content -->
@@ -306,6 +384,35 @@
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/adminlte.min.js"></script>
+    <input id="h_factura" name="h_factura" type="hidden" value="<?php echo $_POST['to_edit'];?>">
+
+    <script>
+        var data ={factura:{cabecera:'',client:''},lineas:[]};
+
+      $( document ).ready(function() {
+        $("input#input_cabecera").val( $( "input#h_cabecera" ).val() );
+        $("#input_cliente").val($( "input#h_client" ).val()).change();
+        data.factura.cabecera = $( "input#input_cabecera" ).val();
+        data.factura.client =  $( "#input_cliente option:selected" ).val();
+        console.log(data);
+
+        var myArr = $("#listado_lineas").find('tr').map(function(){
+            return [ $("td", this).map(function(){ return $(this).text();}).get() ];
+        }).get();
+        console.log(myArr);
+      });
+
+      $("#listado_lineas").on('click', '.btnDelete', function () {
+          //Recojo el indice de la tabla para borrarlo en el array 
+          const index = $(this).closest('tr')[0].rowIndex;
+          //delete data.lineas[index-1];
+          $(this).closest('tr').remove();
+          //console.log(data);
+      });
+
+      
+
+    </script>
 </body>
 
 </html>

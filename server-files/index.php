@@ -306,6 +306,15 @@
     $(document).ready( function () {
         var table = $('#listado_fact').DataTable({
             ajax: 'backend/get_data.php',
+            //processing : true,
+            //serverSide: true,
+            //serverMethod: 'POST',
+            /*columns:{
+              {data:'factura'},
+              {data:'cabecera'},
+              {data:'fecha'},
+              {data: 'cliente'}
+            },*/
             columnDefs: [
             {
                 targets: -1,
