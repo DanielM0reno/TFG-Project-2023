@@ -223,6 +223,7 @@
                     echo "<script>alert('".mysqli_error($connect)."'); </script>";
                   }
                 }
+              }
             ?>
               <!-- Tabla facturas -->
               <div class="card">
@@ -237,7 +238,7 @@
 
                 <div class="card-body p-0">
                   <div class="table-responsive p-2">
-                    <table  class="table table-bordered table-striped dataTable dtr-inline p-2" id="listado_fact">
+                    <table  class="table table-bordered table-striped dataTable dtr-inline p-2 display dataTable" id="listado_fact">
                       <thead>
                         <tr>
                           <th>Nº Factura</th>
@@ -263,7 +264,6 @@
               </div>
               <!-- /.Tabla facturas -->
 
-            <?php }?>
             <!-- /.Card-group 0 -->
 
           </div>
@@ -305,19 +305,13 @@
   <script type="application/javascript">
     $(document).ready( function () {
         var table = $('#listado_fact').DataTable({
-            ajax: 'backend/get_data.php',
-            //processing : true,
-            //serverSide: true,
-            //serverMethod: 'POST',
-            /*columns:{
-              {data:'factura'},
-              {data:'cabecera'},
-              {data:'fecha'},
-              {data: 'cliente'}
-            },*/
+            processing : true,
+            serverSide: true,
+            serverMethod: 'POST',
+            ajax: 'backend/get_index.php',
             columnDefs: [
             {
-                targets: -1,
+                targets: 4,
                 data: null,
                 defaultContent: '</form><form action="view_fact.php" method="post" class="float-left">'+
                                     '<button type="submit" name="view" class="badge badge-success mr-1">Ver</button></form>'+
@@ -327,13 +321,21 @@
                                   '<button type="submit" name="delete" class="badge badge-danger">Borrar</button>',
                                  
             },
-        ],
+            ],
+            columns:[
+              {data:'factura'},
+              {data:'cabecera'},
+              {data:'fecha_creacion'},
+              {data:'client'},
+            ],
+            
         });
 
         $('#listado_fact tbody').on('click', 'button', function () {
           var data = table.row($(this).parents('tr')).data();
-          this.value = data[0];
-    });
+          this.value = data.factura;
+          console.log(table.row($(this).parents('tr')).data());
+        });
     } );
   </script>
   
