@@ -236,7 +236,7 @@
                   </div>
                 </div>
 
-                <div class="card-body p-0">
+                <div class="card-body">
                   <div class="table-responsive p-2">
                     <table  class="table table-bordered table-striped dataTable dtr-inline p-2 display dataTable" id="listado_fact">
                       <thead>
